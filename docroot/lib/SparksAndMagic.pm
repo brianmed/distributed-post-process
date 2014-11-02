@@ -80,6 +80,7 @@ sub startup
     $logged_in->get('/dashboard')->to(controller => 'Dashboard', action => 'show');
     $logged_in->get('/dashboard/email')->to(controller => 'Dashboard', action => 'email');
     $logged_in->post('/dashboard/verify')->to(controller => 'Dashboard', action => 'verify');
+    $logged_in->get('/dashboard/verify/:username/:verification_code')->to(controller => 'Dashboard', action => 'verify');
 }
 
 1;

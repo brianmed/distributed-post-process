@@ -46,13 +46,15 @@ sub email {
     my $md5 = $user->{verification_code};
     my $email = $user->{email};
 
+    my $url = $c->url_for("/dashboard/verify/$username/$md5")->to_abs;
+
     my $mail = Email::Simple->create(
         header => [
             To     => $email,
             From    => 'signup@sparksandmagic.com',
             Subject => "Welcome to some fun",
         ],
-        body => "Thank you for signing up with us.\nPlease follow the link below to verify your email address:\n\nEmail: $email\nVerification number: $md5\n\nhttp://sparksandmagic.com/verify/$username/$md5\n",
+        body => "Thank you for signing up with us.\nPlease follow the link below to verify your email address:\n\nEmail: $email\nVerification number: $md5\n\n$url\n",
     );
 
     my $dir = POSIX::strftime("$site_dir/emails/%F", localtime(time));
@@ -61,7 +63,6 @@ sub email {
     print($fh $mail->as_string);
     close($fh);
 
-=for comment
     my $transport = Email::Sender::Transport::SMTP::TLS->new({
             host => $site_config->{smtp_host},
             port => $site_config->{smtp_port},
@@ -69,28 +70,27 @@ sub email {
             password => $site_config->{smtp_pass},
             timeout => 10,
     });
-=cut
 
     eval {
-        # sendmail($mail, {transport => $transport });
-        sendmail($mail);
+        sendmail($mail, {transport => $transport });
+        # sendmail($mail);
     };
     if ($@) {
         $c->app->log->debug("username: $username: " . $@);
-        $c->flash("error", "Email not sent");
+        $c->flash("error", "Email not sent: " . scalar(localtime(time)));
     }
     else {
-        $c->flash("success", "Email sent");
+        $c->flash("success", "Email sent: " . scalar(localtime(time)));
     }
 
-    my $url = $c->url_for('/dashboard');
+    $url = $c->url_for('/dashboard');
     return($c->redirect_to($url));
 }
 
 sub verify {
     my $c = shift;
 
-    my $username = $c->session("username");
+    my $username = $c->session("username") || $c->param("username");
 
     my $site_dir = $c->site_dir;
     my $site_config = $c->site_config;

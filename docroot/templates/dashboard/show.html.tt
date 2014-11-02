@@ -21,7 +21,7 @@
     <body>
         <div id="example" class="container">
             <ul id="menu">
-                <li><a href="#profile">Home</a></li>
+                <li><a href="/">Home</a></li>
                 <li><a href="#faq">FAQ</a></li>
                 <li><a href="#orders">About</a></li>
                 <li><a href="/logout">Logout</a></li>

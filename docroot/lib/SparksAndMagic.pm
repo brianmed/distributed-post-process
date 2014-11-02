@@ -10,6 +10,11 @@ sub site_dir
     state $site_dir = pop;
 }
 
+sub site_config
+{
+    state $site_config = pop;
+}
+
 sub startup
 {
     my $self = shift;
@@ -18,7 +23,9 @@ sub startup
 
     my $site_config = $self->plugin("Config" => {file => '/opt/magic'});
     $self->helper(site_dir => \&site_dir);
+    $self->helper(site_config => \&site_config);
     $self->site_dir($$site_config{site_dir});
+    $self->site_config($site_config);
 
     my $listen = [];
     push(@{ $listen }, "http://$$site_config{hypnotoad_ip}:$$site_config{hypnotoad_port}");
@@ -71,6 +78,8 @@ sub startup
     $r->get('/logout')->to(controller => 'Index', action => 'logout');
 
     $logged_in->get('/dashboard')->to(controller => 'Dashboard', action => 'show');
+    $logged_in->get('/dashboard/email')->to(controller => 'Dashboard', action => 'email');
+    $logged_in->post('/dashboard/verify')->to(controller => 'Dashboard', action => 'verify');
 }
 
 1;

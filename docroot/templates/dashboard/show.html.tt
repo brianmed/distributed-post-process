@@ -54,6 +54,7 @@
                     <section class="well">
                         <h2 class="ra-well-title">Dashboard</h2>
 
+                        [% IF verified %]
                         <div class="form-horizontal form-widgets col-sm-8">
                             <div class="form-group">
                                 <label class="control-label col-sm-2">Username</label>
@@ -70,7 +71,26 @@
                             </div>
                         </div>
 
-                    <div class="clearfix"></div>
+                        <div class="clearfix"></div>
+                        [% ELSE %]
+                        <form method="post" action="/dashboard/verify">
+                        <div class="form-horizontal form-widgets col-sm-8">
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Verification Code</label>
+                                <div class="col-lg-6">
+                                    <input id="verification_code" name="verification_code" value="[% verification_code | html_entity %]" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="clearfix"></div>
+
+                        <div class="buttons-wrap">
+                            <a href="/dashboard/email" class="k-button">Send Email</a>
+                            <button type="submit" class="k-button k-state-default">Verify</button>
+                        </div>
+                        </form>
+                        [% END %]
 
                     </section>
                 </div>

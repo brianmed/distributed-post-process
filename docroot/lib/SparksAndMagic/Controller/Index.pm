@@ -2,7 +2,7 @@ package SparksAndMagic::Controller::Index;
 
 use Mojo::Base 'Mojolicious::Controller';
 
-use Mojo::Util qw(slurp spurt b64_encode);
+use Mojo::Util qw(slurp spurt b64_encode md5_sum);
 use Mojo::JSON qw(encode_json decode_json);
 
 use Crypt::Eksblowfish::Bcrypt;
@@ -130,7 +130,10 @@ sub signup {
     my $bytes = encode_json({
         username => $username,
         password => $c->hash_password($password),
-        api_key => b64_encode(scalar(localtime(time)) . "::" . $$ . "::" . int(rand(10_000)), ""),
+        email => $email,
+        verification_code => md5_sum(time),
+        verified => 0,
+        api_key => md5_sum(scalar(localtime(time)) . "::" . $$ . "::" . int(rand(10_000)), ""),
     });
     spurt($bytes, "$site_dir/users/$username/metadata");
 

@@ -29,6 +29,10 @@ sub jpeg {
 
     my $jpeg = $c->next_jpeg($username);
 
+    if (!defined $jpeg) {
+        return $c->render(json => {status => "finished", data => { message => "Seems all processing is done" }});
+    }
+
     if ("-1" eq $jpeg) {
         return $c->render(json => {status => "error", data => { message => "Unable to create inprogress directory" }});
     }

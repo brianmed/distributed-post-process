@@ -16,6 +16,10 @@ sub slash {
         return($c->redirect_to($url));
     }
 
+    $c->stash(username => "");
+    $c->stash(error => "");
+    $c->stash(success => "");
+
     $c->render;
 }
 
@@ -23,6 +27,10 @@ sub login {
     my $c = shift;
 
     my ($username, $password) = $c->param(['username', 'password']);
+
+    $c->stash(username => "");
+    $c->stash(error => "");
+    $c->stash(success => "");
 
     if ("GET" eq $c->req->method && !$c->flash("username")) {
         return($c->render(template => "index/slash"));
@@ -78,6 +86,10 @@ sub login {
 
 sub signup {
     my $c = shift;
+
+    $c->stash(username => "");
+    $c->stash(error => "");
+    $c->stash(email => "");
 
     if ("GET" eq $c->req->method) {
         return($c->render());

@@ -20,6 +20,9 @@ sub show {
     my $bytes = slurp("$site_dir/users/$username/metadata");
     my $user = decode_json($bytes);
 
+    $c->stash(error => "");
+    $c->stash(success => "");
+    $c->stash(verification_code => "");
     $c->stash("username", $user->{username});
     $c->stash("api_key", $user->{api_key});
     $c->stash("verified", $user->{verified});

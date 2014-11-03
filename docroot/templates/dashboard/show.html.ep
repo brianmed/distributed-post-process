@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Post Render</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <link rel="stylesheet" href="vendor/bootstrap.min.css" />
+        <link rel="stylesheet" href="styles/kendo.common-bootstrap.min.css" />
+        <link rel="stylesheet" href="styles/kendo.flat.min.css" />
+
+        <script src="js/jquery.min.js"></script>
+        <script src="js/kendo.ui.core.min.js"></script>
+
+        <link rel="stylesheet" href="styles/styles.css" />
+
+        <!--[if lt IE 9]>
+        <script src="vendor/html5shiv.js"></script>
+        <script src="vendor/respond.min.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+        <div id="example" class="container">
+            <ul id="menu">
+                <li><a href="/">Home</a></li>
+                <!-- <li><a href="#faq">FAQ</a></li> -->
+                <!-- <li><a href="#orders">About</a></li> -->
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+
+            <div class="row clearfix" style="margin-bottom: 20px">
+                <div class="col-lg-12">
+                    <h1>Image Processing Fun</h1>
+                </div>
+            </div>
+
+            % if ($error) {
+            <div class="row clearfix" style="margin-bottom: 20px">
+                <div class="col-lg-12">
+                    <div class="alert alert-danger" role="alert"><%== $error %></div>
+                </div>
+            </div>
+            % }
+
+            % if ($success) {
+            <div class="row clearfix" style="margin-bottom: 20px">
+                <div class="col-lg-12">
+                    <div class="alert alert-success" role="alert"><%== $success %></div>
+                </div>
+            </div>
+            % }
+
+            <div class="row clearfix" style="margin-bottom: 20px">
+                <div class="col-lg-12">
+                    <section class="well">
+                        <h2 class="ra-well-title">Dashboard</h2>
+
+                        % if ($verified) {
+                        <div class="form-horizontal form-widgets col-sm-8">
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Username</label>
+                                <div class="col-lg-6">
+                                    <input value="<%== $username %>" disabled/>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">API Key</label>
+                                <div class="col-lg-10">
+                                    <input value="<%== $api_key %>" disabled/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="clearfix"></div>
+                        % } else {
+                        <form method="post" action="/dashboard/verify">
+                        <div class="form-horizontal form-widgets col-sm-8">
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Verification Code</label>
+                                <div class="col-lg-6">
+                                    <input id="verification_code" name="verification_code" value="<%== $verification_code %>" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="clearfix"></div>
+
+                        <div class="buttons-wrap">
+                            <a href="/dashboard/email" class="k-button">Send Email</a>
+                            <button type="submit" class="k-button k-state-default">Verify</button>
+                        </div>
+                        </form>
+                        % }
+
+                    </section>
+                </div>
+            </div>
+
+            % if ($verified) {
+            <div class="row clearfix" style="margin-bottom: 20px">
+                <div class="col-lg-12">
+                    <section class="well">
+                        <h2 class="ra-well-title">API</h2>
+
+                        <blockquote>
+                              <p>/api/v1/jpeg</p>
+                        </blockquote>
+
+                        <pre>$ curl -X POST <%== $url %> \\
+    --data '{"username":"<%== $username %>","api_key":"<%== $api_key %>"}'
+                        </pre>
+
+                        <blockquote>
+                              <p>/api/v1/gray</p>
+                        </blockquote>
+
+                        <pre>$ curl -X POST <%== $url %> \\
+    --data '{"username":"<%== $username %>","api_key":"<%== $api_key %>","bytes":"'$BYTES'"}'
+                    </section>
+                </div>
+            </div>
+
+            <div class="row clearfix" style="margin-bottom: 20px">
+                <div class="col-lg-12">
+                    <section class="well">
+                        <h2 class="ra-well-title">Commands</h2>
+
+                        <blockquote>
+                              <p>Convert to grayscale
+                        </blockquote>
+
+                        <pre>$ convert jpg/$file -colorspace gray gray/$file</pre>
+                    </section>
+                </div>
+            </div>
+            % }
+
+            <footer>Copyright &copy; 2014 Sparks and Magic, LLC</footer>
+        </div>
+
+        <script>
+            $("#menu").kendoMenu();
+
+            $("#example .form-widgets")
+                .find("select:not([multiple])").kendoDropDownList().end()
+                .find("select[multiple]").kendoMultiSelect().end()
+                .find("input:not([type])").addClass("k-textbox").end()
+                .find("input[type=password]").addClass("k-textbox").end()
+                .find("input[type=email]").addClass("k-textbox").end()
+                .find("input[type=date]").kendoDatePicker().end()
+                .find("input[type=number]").kendoNumericTextBox({
+                    format: "0 years"
+            });
+        </script>
+    </body>
+</html>
+

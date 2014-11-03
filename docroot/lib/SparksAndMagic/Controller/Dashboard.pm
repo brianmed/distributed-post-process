@@ -26,7 +26,8 @@ sub show {
     $c->stash("username", $user->{username});
     $c->stash("api_key", $user->{api_key});
     $c->stash("verified", $user->{verified});
-    $c->stash("url", $c->url_for("/api/v1/jpeg")->to_abs);
+    $c->stash("url_jpeg", $c->url_for("/api/v1/jpeg")->to_abs);
+    $c->stash("url_gray", $c->url_for("/api/v1/gray")->to_abs);
 
     if ($c->flash("error")) {
         $c->stash("error", $c->flash("error"));

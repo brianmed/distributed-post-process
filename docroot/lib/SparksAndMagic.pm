@@ -35,9 +35,6 @@ sub startup
 
     $self->plugin(AccessLog => {uname_helper => 'set_username', log => "$$site_config{site_dir}/docroot/log/access.log", format => '%h %l %u %t "%r" %>s %b %D "%{Referer}i" "%{User-Agent}i"'});
 
-    # $self->plugin(tt_renderer => {template_options => {CACHE_SIZE => 0, COMPILE_EXT => undef, COMPILE_DIR => undef}});
-    # $self->renderer->default_handler('tt');
-    
     $self->secrets([$$site_config{site_secret}]);
     
     # Router

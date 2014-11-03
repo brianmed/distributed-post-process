@@ -106,7 +106,7 @@
                               <p>/api/v1/jpeg</p>
                         </blockquote>
 
-                        <pre>$ curl -X POST <%== $url %> \\
+                        <pre>$ curl -X POST <%== $url_jpeg %> \\
     --data '{"username":"<%== $username %>","api_key":"<%== $api_key %>"}'
                         </pre>
 
@@ -114,7 +114,7 @@
                               <p>/api/v1/gray</p>
                         </blockquote>
 
-                        <pre>$ curl -X POST <%== $url %> \\
+                        <pre>$ curl -X POST <%== $url_gray %> \\
     --data '{"username":"<%== $username %>","api_key":"<%== $api_key %>","bytes":"'$BYTES'"}'
                     </section>
                 </div>

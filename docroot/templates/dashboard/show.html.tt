@@ -22,8 +22,8 @@
         <div id="example" class="container">
             <ul id="menu">
                 <li><a href="/">Home</a></li>
-                <li><a href="#faq">FAQ</a></li>
-                <li><a href="#orders">About</a></li>
+                <!-- <li><a href="#faq">FAQ</a></li> -->
+                <!-- <li><a href="#orders">About</a></li> -->
                 <li><a href="/logout">Logout</a></li>
             </ul>
 
@@ -112,6 +112,9 @@
                         <blockquote>
                               <p>/api/v1/gray</p>
                         </blockquote>
+
+                        <pre>$ curl -X POST [% url | html_entity %] \
+    /api/v1/gray --data '{"username":"[% username | html_entity %]","api_key":"[% api_key | html_entity %]","bytes":"'$BYTES'"}'
                     </section>
                 </div>
             </div>

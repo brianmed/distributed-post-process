@@ -2,10 +2,11 @@ package SparksAndMagic::Controller::API;
 
 use Mojo::Base 'Mojolicious::Controller';
 
-use Mojo::Util qw(slurp spurt b64_encode);
+use Mojo::Util qw(slurp spurt b64_encode b64_decode);
 use Mojo::JSON qw(encode_json decode_json);
 use File::Copy;
 use File::Basename;
+use File::Temp;
 
 sub post {
     my $c = shift;
@@ -34,6 +35,50 @@ sub jpeg {
 
     my $path = "$site_dir/inprogress/$username/$jpeg";
     $c->render(json => {status => "ok", data => { message => "Sending $jpeg", filename => $jpeg, base64 => b64_encode(slurp($path), "")}});
+}
+
+sub gray {
+    my $c = shift;
+
+    my $site_dir = $c->site_dir;
+    my $username = $c->req->json->{username};
+
+    unless (-d "$site_dir/inprogress/$username") {
+        return($c->render(json => {status => "error", data => { message => "Nothing inprogress found" }}));
+    }
+
+    return($c->render(json => {status => "error", data => { message => "No bytes found" }})) unless $c->req->json->{bytes};
+
+    my ($fh, $filename) = File::Temp::tempfile("grayXXXXXX", TMPDIR => 1, SUFFIX => '.jpg', UNLINK => 0);
+    print($fh b64_decode($c->req->json->{bytes}));
+    close($fh);
+
+    my $identify = `/usr/bin/identify $filename`;
+    
+    unless ($identify) {
+        return($c->render(json => {status => "error", data => { message => "Unable to identify grayscale image." }}));
+    }
+
+    unless ($identify =~ m/JPEG/) {
+        return($c->render(json => {status => "error", data => { message => "JPEG not detected" }}));
+    }
+    unless ($identify =~ m/1280x720/) {
+        return($c->render(json => {status => "error", data => { message => "1280x720 not detected" }}));
+    }
+
+    my ($inprogress) = glob("$site_dir/inprogress/$username/image*.jpg");
+    my $jpeg = basename($inprogress);
+    my $gray = $jpeg;
+    $gray =~ s#image#gray#;
+
+    mkdir("$site_dir/gray/$username");
+    mkdir("$site_dir/done/$username");
+    File::Copy::move($filename, "$site_dir/gray/$username/$gray");
+    File::Copy::move($inprogress, "$site_dir/done/$username/$jpeg");
+
+    rmdir("$site_dir/inprogress/$username");
+
+    $c->render(json => {status => "ok", data => { message => "Thank you." }});
 }
 
 sub next_jpeg {

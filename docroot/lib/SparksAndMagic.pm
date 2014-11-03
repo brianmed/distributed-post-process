@@ -110,7 +110,7 @@ sub startup
             return undef;
         }
         else {
-            $self->set_username($self->session("username"));
+            $self->set_username($username);
         }
 
         unless ($api_key eq $user->{api_key}) {
@@ -138,6 +138,9 @@ sub startup
 
     $api->get('/api/v1/jpeg')->to(controller => "API", action => "post");
     $api->post('/api/v1/jpeg')->to(controller => "API", action => "jpeg");
+
+    $api->get('/api/v1/gray')->to(controller => "API", action => "post");
+    $api->post('/api/v1/gray')->to(controller => "API", action => "gray");
 }
 
 1;

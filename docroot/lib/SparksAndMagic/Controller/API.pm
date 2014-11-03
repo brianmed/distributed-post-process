@@ -5,6 +5,7 @@ use Mojo::Base 'Mojolicious::Controller';
 use Mojo::Util qw(slurp spurt b64_encode);
 use Mojo::JSON qw(encode_json decode_json);
 use File::Copy;
+use File::Basename;
 
 sub post {
     my $c = shift;
@@ -19,7 +20,9 @@ sub jpeg {
     my $username = $c->req->json->{username};
 
     if (-d "$site_dir/inprogress/$username") {
-        $c->render(json => {status => "error", data => { message => "One jpeg at a time, please" }});
+        my ($path) = glob("$site_dir/inprogress/$username/image*.jpg");
+        my $jpeg = basename($path);
+        $c->render(json => {status => "ok", data => { message => "Sending $jpeg", filename => $jpeg, base64 => b64_encode(slurp($path), "")}});
         return;
     }
 

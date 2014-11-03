@@ -96,8 +96,43 @@
                 </div>
             </div>
 
+            <div class="row clearfix" style="margin-bottom: 20px">
+                <div class="col-lg-12">
+                    <section class="well">
+                        <h2 class="ra-well-title">API</h2>
+
+                        <blockquote>
+                              <p>/api/v1/jpeg</p>
+                        </blockquote>
+
+                        <pre>$ curl -X POST [% url | html_entity %] \
+    --data '{"username":"[% username | html_entity %]","api_key":"[% api_key | html_entity %]"}'
+                        </pre>
+
+                        <blockquote>
+                              <p>/api/v1/gray</p>
+                        </blockquote>
+                    </section>
+                </div>
+            </div>
+
+            <div class="row clearfix" style="margin-bottom: 20px">
+                <div class="col-lg-12">
+                    <section class="well">
+                        <h2 class="ra-well-title">Commands</h2>
+
+                        <blockquote>
+                              <p>Convert to grayscale
+                        </blockquote>
+
+                        <pre>$ convert jpg/$file -colorspace gray gray/$file</pre>
+                    </section>
+                </div>
+            </div>
+
             <footer>Copyright &copy; 2014 Sparks and Magic, LLC</footer>
         </div>
+
         <script>
             $("#menu").kendoMenu();
 

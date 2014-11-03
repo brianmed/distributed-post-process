@@ -48,7 +48,9 @@ sub startup
 
         if (!$self->session("username")) {
             my $url = $self->url_for('/');
-            return($self->redirect_to($url));
+            $self->redirect_to($url);
+
+            return undef;
         }
         else {
             my $site_dir = $self->site_dir;
@@ -60,12 +62,64 @@ sub startup
                 $self->flash("error", "Clerical error");
 
                 my $url = $self->url_for('/');
-                return($self->redirect_to($url));
+                $self->redirect_to($url);
+
+                return undef;
             }
             else {
                 $self->set_username($self->session("username"));
+
+                return 1;
             }
         }
+    });
+
+    my $api = $r->under (sub {
+        my $self = shift;
+
+        return($self->render(json => {status => "error", data => { message => "No JSON found" }})) unless $self->req->json;
+
+        my $site_dir = $self->site_dir;
+        my $username = $self->req->json->{username};
+        my $api_key = $self->req->json->{api_key};
+
+        unless ($username) {
+            $self->render(json => {status => "error", data => { message => "No username found" }});
+
+            return undef;
+        }
+
+        unless ($api_key) {
+            $self->render(json => {status => "error", data => { message => "No API Key found" }});
+
+            return undef;
+        }
+
+        unless (-d "$site_dir/users/$username") {
+            $self->render(json => {status => "error", data => { message => "Credentials mis-match" }});
+
+            return undef;
+        }
+
+        my $bytes = slurp("$site_dir/users/$username/metadata");
+        my $user = decode_json($bytes);
+
+        if ($username ne $user->{username}) {
+            $self->render(json => {status => "error", data => { message => "Clerical error" }});
+
+            return undef;
+        }
+        else {
+            $self->set_username($self->session("username"));
+        }
+
+        unless ($api_key eq $user->{api_key}) {
+            $self->render(json => {status => "error", data => { message => "Credentials mis-match" }});
+
+            return undef;
+        }
+
+        return 1;
     });
     
     $r->get('/')->to(controller => 'Index', action => 'slash');
@@ -81,6 +135,9 @@ sub startup
     $logged_in->get('/dashboard/email')->to(controller => 'Dashboard', action => 'email');
     $logged_in->post('/dashboard/verify')->to(controller => 'Dashboard', action => 'verify');
     $logged_in->get('/dashboard/verify/:username/:verification_code')->to(controller => 'Dashboard', action => 'verify');
+
+    $api->get('/api/v1/jpeg')->to(controller => "API", action => "post");
+    $api->post('/api/v1/jpeg')->to(controller => "API", action => "jpeg");
 }
 
 1;
